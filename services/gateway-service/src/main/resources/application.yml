@@ -15,29 +15,39 @@ management:
 spring:
   application:
     name: gateway-service
+
   redis:
     host: ${SPRING_DATA_REDIS_HOST:redis}
     port: ${SPRING_DATA_REDIS_PORT:6379}
+
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: auth-service-docs
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth-service/v3/api-docs
-          filters:
-            - RewritePath=/auth-service/v3/api-docs, /v3/api-docs
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/api/auth/**
+      server:
+        webflux:
+          httpserver:
+            wiretap: true
+          httpclient:
+            wiretap: true
+          routes:
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth-service/**
+              filters:
+                - StripPrefix=1
+
 
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
+    path: /swagger-ui.html
     urls:
-      - name: auth-service
+      - name: Auth Service
         url: /auth-service/v3/api-docs
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway.route: DEBUG
+    reactor.netty: DEBUG
