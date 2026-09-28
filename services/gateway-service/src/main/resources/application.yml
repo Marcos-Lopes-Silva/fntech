@@ -19,6 +19,12 @@ spring:
   redis:
     host: ${SPRING_DATA_REDIS_HOST:redis}
     port: ${SPRING_DATA_REDIS_PORT:6379}
+  
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
 
   cloud:
     gateway:
@@ -35,6 +41,7 @@ spring:
                 - Path=/auth-service/**
               filters:
                 - StripPrefix=1
+                - AddRequestHeader=X-Forwarded-Prefix, /auth-service
 
 
 springdoc:

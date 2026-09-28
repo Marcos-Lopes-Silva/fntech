@@ -13,11 +13,13 @@ public class SecurityConfig {
     
     @Bean 
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(
                     ex -> ex
-                    .pathMatchers("/auth/**", "/actuator/health").permitAll()
+                    .pathMatchers("/auth/**", "/actuator/health", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
+                    .pathMatchers("/auth-service/v3/api-docs/**", "/auth-service/auth/**").permitAll()
                     .pathMatchers("/admin/**").hasRole("ADMIN")
                     .anyExchange().authenticated()
                 )

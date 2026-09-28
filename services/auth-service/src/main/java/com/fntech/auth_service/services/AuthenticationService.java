@@ -6,7 +6,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.fntech.auth_service.dto.AuthenticationRequest;
 import com.fntech.auth_service.dto.AuthenticationResponse;
 import com.fntech.auth_service.repositories.UserRepository;
 import com.fntech.auth_service.security.JwtTokenProvider;
@@ -30,13 +29,13 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(String email, String password) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()));
+                        email,
+                        password));
 
-        var user = userRepository.findByEmail(request.email())
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
         Map<String, Object> extraClaims = new HashMap<>();
